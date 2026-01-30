@@ -1,21 +1,23 @@
 """
-I'm not human CAPTCHA system.
-A CAPTCHA system designed to be solved by automated agents but difficult for humans.
+CAPTCHA system that only automated agents can solve.
+Provides two types of challenges:
+1. Base64 encoded text that must be decoded
+2. Geometric sequence patterns that require calculation
 """
 
 import base64
 import random
-from typing import Dict
 
 
-def generate_captcha() -> Dict[str, str]:
+def generate_captcha():
     """
-    Generate a CAPTCHA challenge that can be either:
-    1. Base64 encoded text that needs to be decoded
-    2. Geometric sequence where the next number needs to be calculated
+    Generates a CAPTCHA challenge.
     
     Returns:
-        Dict with 'type', 'challenge', and 'answer' keys
+        dict: A dictionary containing:
+            - 'type': Type of challenge ('base64' or 'sequence')
+            - 'challenge': The challenge text/question
+            - 'answer': The correct answer (for validation)
     """
     challenge_type = random.choice(['base64', 'sequence'])
     
@@ -25,73 +27,68 @@ def generate_captcha() -> Dict[str, str]:
         return _generate_sequence_challenge()
 
 
-def _generate_base64_challenge() -> Dict[str, str]:
+def _generate_base64_challenge():
     """
-    Generate a base64 encoded text challenge.
+    Generates a base64 encoded text challenge.
     
     Returns:
-        Dict with type='base64', challenge=encoded text, answer=original text
+        dict: Challenge with base64 encoded text
     """
+    # Generate random text or use predefined texts
     texts = [
         'SoloParaAgentes',
-        'AutomationOnly',
+        'AutomatedOnly',
         'NoHumansAllowed',
-        'BotAccess',
+        'BotsWelcome',
         'MachineReadable'
     ]
     
-    original_text = random.choice(texts)
-    encoded = base64.b64encode(original_text.encode()).decode()
+    text = random.choice(texts)
+    encoded = base64.b64encode(text.encode()).decode()
     
     return {
         'type': 'base64',
-        'challenge': encoded,
-        'answer': original_text
+        'challenge': f'Decode this base64 text: {encoded}',
+        'answer': text
     }
 
 
-def _generate_sequence_challenge() -> Dict[str, str]:
+def _generate_sequence_challenge():
     """
-    Generate a geometric sequence challenge.
-    The sequence follows the pattern: a, a*r, a*r^2, ...
+    Generates a geometric sequence challenge.
     
     Returns:
-        Dict with type='sequence', challenge=sequence string, answer=next number
+        dict: Challenge with geometric sequence
     """
-    # Generate geometric sequence parameters
-    base = random.randint(2, 5)
-    ratio = random.randint(2, 4)
+    # Generate geometric sequence (e.g., 3, 9, 27, ?)
+    first_term = random.choice([2, 3, 4, 5])
+    ratio = random.choice([2, 3, 4])
     length = random.randint(3, 5)
     
-    # Generate sequence
-    sequence = [base * (ratio ** i) for i in range(length)]
-    next_value = base * (ratio ** length)
+    sequence = [first_term * (ratio ** i) for i in range(length)]
+    next_value = first_term * (ratio ** length)
     
-    # Format as string
-    challenge_str = ', '.join(str(n) for n in sequence) + ', ?'
+    sequence_str = ', '.join(map(str, sequence))
     
     return {
         'type': 'sequence',
-        'challenge': challenge_str,
+        'challenge': f'What is the next number in this sequence: {sequence_str}, ?',
         'answer': str(next_value)
     }
 
 
-def validate_captcha(challenge: Dict[str, str], response: str) -> bool:
+def validate_captcha(challenge, response):
     """
-    Validate the response to a CAPTCHA challenge.
+    Validates a CAPTCHA response.
     
     Args:
-        challenge: The challenge dict returned by generate_captcha()
-        response: The user's response as a string
-    
+        challenge (dict): The challenge dictionary returned by generate_captcha()
+        response (str): The user's response
+        
     Returns:
-        True if response is correct, False otherwise
+        bool: True if the response is correct, False otherwise
     """
-    if not challenge or not isinstance(challenge, dict):
-        return False
-    
-    if 'answer' not in challenge:
+    if not isinstance(challenge, dict) or 'answer' not in challenge:
         return False
     
     return str(response).strip() == str(challenge['answer']).strip()
