@@ -5,7 +5,7 @@ A CAPTCHA system designed to be solved by automated agents but difficult for hum
 
 import base64
 import random
-from typing import Dict, Tuple
+from typing import Dict
 
 
 def generate_captcha() -> Dict[str, str]:
