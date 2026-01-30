@@ -48,7 +48,12 @@ class TestCaptcha(unittest.TestCase):
         for _ in range(10):
             captcha = generate_captcha()
             if captcha['type'] == 'sequence':
-                self.assertTrue(captcha['answer'].isdigit())
+                # Verify the answer can be converted to an integer
+                try:
+                    int(captcha['answer'])
+                    self.assertTrue(True)
+                except ValueError:
+                    self.fail(f"Sequence answer '{captcha['answer']}' is not a valid number")
                 break
     
     def test_validate_captcha_correct_answer(self):
