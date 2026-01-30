@@ -1,11 +1,11 @@
 # GitHub Copilot Instructions
 
 ## Project Overview
-This is "I'm not human captcha" - a recaptcha system designed specifically for AI agents. The project aims to distinguish between human users and AI agents through specialized captcha mechanisms.
+This is "I'm not human captcha" - a reCAPTCHA system designed specifically for AI agents. The project aims to distinguish between human users and AI agents through specialized captcha mechanisms.
 
 ## Project Goals
 - Create a captcha system that can effectively identify and challenge AI agents
-- Provide a recaptcha solution tailored for the modern AI landscape
+- Provide a reCAPTCHA solution tailored for the modern AI landscape
 - Maintain simplicity and ease of integration
 
 ## Coding Standards
