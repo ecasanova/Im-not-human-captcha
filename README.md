@@ -1,40 +1,44 @@
-# I'm Not Human CAPTCHA
+# Im-not-human-captcha
 
-A reverse CAPTCHA system designed to be solved by automated agents but difficult for humans.
+A reverse CAPTCHA system designed to be solved by automated agents but difficult for humans. This project inverts the traditional CAPTCHA concept by creating challenges that are trivial for machines but complicated for humans.
 
-## Descripción del Proyecto
+## 🎯 Propósito
 
-Este proyecto implementa un sistema de CAPTCHA innovador que invierte el concepto tradicional: en lugar de validar que el usuario es humano, valida que el usuario es una máquina o agente automatizado. El sistema presenta desafíos que son triviales para scripts pero complejos o tediosos para humanos.
+El objetivo de este proyecto es demostrar un concepto invertido de CAPTCHA, donde:
+- Los agentes automatizados pueden resolver los desafíos fácilmente
+- Los humanos encuentran difícil resolver los desafíos manualmente
+- Se protegen recursos destinados exclusivamente para automatización
 
-## Tipos de Desafíos
+## 🚀 Características
+
+Este sistema implementa dos tipos de desafíos:
 
 ### 1. Texto Codificado en Base64
-El sistema genera un texto codificado en base64 que debe ser decodificado.
+Genera texto codificado en base64 que debe ser decodificado.
 
 **Ejemplo:**
 - **Texto original:** `SoloParaAgentes`
 - **Desafío (codificado):** `U29sb1BhcmFBZ2VudGVz`
 - **Respuesta esperada:** `SoloParaAgentes`
 
-### 2. Secuencia Numérica Geométrica
-El sistema presenta una secuencia numérica que sigue un patrón geométrico. El desafío es calcular el siguiente número en la secuencia.
+### 2. Secuencias Numéricas Geométricas
+Presenta secuencias numéricas basadas en patrones geométricos.
 
 **Ejemplo:**
 - **Desafío:** `3, 9, 27, ?`
 - **Patrón:** Cada número es el anterior multiplicado por 3
-- **Respuesta esperada:** `81`
+- **Respuesta correcta**: `81`
 
-## Instalación
+## 📦 Instalación
+
+No requiere dependencias externas, solo Python 3.6 o superior.
 
 ```bash
-# Clonar el repositorio
 git clone https://github.com/ecasanova/Im-not-human-captcha.git
 cd Im-not-human-captcha
-
-# No se requieren dependencias adicionales (solo Python 3.6+)
 ```
 
-## Uso
+## 💻 Uso
 
 ### Uso Básico
 
@@ -70,7 +74,7 @@ challenge = generate_captcha()
 
 if challenge['type'] == 'base64':
     # El agente decodifica el desafío
-    encoded_text = challenge['challenge']
+    encoded_text = challenge['challenge'].split(': ')[1]
     decoded_text = base64.b64decode(encoded_text).decode()
     
     # Validar
@@ -88,7 +92,8 @@ challenge = generate_captcha()
 
 if challenge['type'] == 'sequence':
     # El agente analiza la secuencia
-    sequence_str = challenge['challenge'].replace(', ?', '')
+    sequence_part = challenge['challenge'].split(': ')[1]
+    sequence_str = sequence_part.replace(', ?', '')
     numbers = [int(n.strip()) for n in sequence_str.split(',')]
     
     # Calcular el patrón (razón geométrica)
@@ -100,7 +105,38 @@ if challenge['type'] == 'sequence':
     print(f"Validación: {is_valid}")  # True
 ```
 
-## API Reference
+## 🧪 Testing
+
+El proyecto incluye pruebas unitarias completas:
+
+```bash
+# Ejecutar todas las pruebas
+python -m unittest test_captcha -v
+
+# Ejecutar pruebas específicas
+python -m unittest test_captcha.TestCaptcha -v
+python -m unittest test_captcha.TestBase64Challenge -v
+python -m unittest test_captcha.TestSequenceChallenge -v
+```
+
+Las pruebas cubren:
+- Generación correcta de desafíos
+- Validación de respuestas correctas e incorrectas
+- Manejo de espacios en blanco
+- Casos específicos documentados
+- Validación de formato de datos
+- Patrones geométricos en secuencias
+
+## 📁 Estructura del Proyecto
+
+```
+Im-not-human-captcha/
+├── captcha.py          # Lógica principal del sistema CAPTCHA
+├── test_captcha.py     # Pruebas unitarias
+└── README.md           # Este archivo
+```
+
+## 🔧 API
 
 ### `generate_captcha()`
 
@@ -123,21 +159,7 @@ Valida la respuesta de un usuario contra un desafío generado.
 **Retorna:**
 - `bool`: `True` si la respuesta es correcta, `False` en caso contrario
 
-## Testing
-
-El proyecto incluye pruebas unitarias completas:
-
-```bash
-# Ejecutar todas las pruebas
-python -m unittest test_captcha -v
-
-# Ejecutar pruebas específicas
-python -m unittest test_captcha.TestCaptcha -v
-python -m unittest test_captcha.TestBase64Challenge -v
-python -m unittest test_captcha.TestSequenceChallenge -v
-```
-
-## Casos de Uso
+## 🔮 Casos de Uso
 
 Este sistema puede ser utilizado en:
 
@@ -146,7 +168,7 @@ Este sistema puede ser utilizado en:
 3. **Educación**: Enseñar conceptos de codificación y patrones matemáticos
 4. **Juegos para desarrolladores**: Desafíos que requieren programación para resolver
 
-## Extensibilidad
+## 🔮 Extensibilidad
 
 El diseño modular permite agregar fácilmente nuevos tipos de desafíos:
 
@@ -160,7 +182,19 @@ def _generate_custom_challenge():
     }
 ```
 
-## Contribuciones
+Posibles extensiones futuras:
+- Operaciones matemáticas complejas (factoriales, fibonacci, etc.)
+- Conversión entre sistemas numéricos (binario, hexadecimal)
+- Expresiones regulares complejas
+- Cálculos hash (MD5, SHA)
+- Operaciones con fechas y timestamps
+- Parsing de JSON/XML
+
+## 📝 Licencia
+
+Este proyecto está disponible como código abierto bajo los términos de la licencia MIT.
+
+## 👥 Contribuciones
 
 Las contribuciones son bienvenidas. Por favor:
 
@@ -170,15 +204,7 @@ Las contribuciones son bienvenidas. Por favor:
 4. Push a la rama (`git push origin feature/nueva-caracteristica`)
 5. Abre un Pull Request
 
-## Licencia
-
-Este proyecto está disponible como código abierto bajo los términos de la licencia MIT.
-
-## Autor
-
-- ecasanova
-
-## Notas de Seguridad
+## ⚠️ Notas de Seguridad
 
 Este sistema está diseñado como una prueba de concepto y demostración educativa. Para uso en producción, considere:
 
