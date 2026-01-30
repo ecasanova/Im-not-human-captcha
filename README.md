@@ -1,4 +1,4 @@
-# Im-not-human-captcha
+# I'm Not Human CAPTCHA
 
 A reverse CAPTCHA system designed to be solved by automated agents but difficult for humans. This project inverts the traditional CAPTCHA concept by creating challenges that are trivial for machines but complicated for humans.
 
@@ -115,8 +115,6 @@ python -m unittest test_captcha -v
 
 # Ejecutar pruebas específicas
 python -m unittest test_captcha.TestCaptcha -v
-python -m unittest test_captcha.TestBase64Challenge -v
-python -m unittest test_captcha.TestSequenceChallenge -v
 ```
 
 Las pruebas cubren:
@@ -168,7 +166,7 @@ Este sistema puede ser utilizado en:
 3. **Educación**: Enseñar conceptos de codificación y patrones matemáticos
 4. **Juegos para desarrolladores**: Desafíos que requieren programación para resolver
 
-## 🔮 Extensibilidad
+## 🔧 Extensibilidad
 
 El diseño modular permite agregar fácilmente nuevos tipos de desafíos:
 
