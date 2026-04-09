@@ -1,6 +1,6 @@
-# Im-not-human-captcha
+# I'm Not Human CAPTCHA
 
-Un sistema de CAPTCHA que **solo** puede ser resuelto por agentes automatizados (bots, scripts) y **no** por humanos. Este proyecto invierte el concepto tradicional de CAPTCHA al crear desafíos que son triviales para las máquinas pero complicados para los humanos.
+A reverse CAPTCHA system designed to be solved by automated agents but difficult for humans. This project inverts the traditional CAPTCHA concept by creating challenges that are trivial for machines but complicated for humans.
 
 ## 🎯 Propósito
 
@@ -17,15 +17,17 @@ Este sistema implementa dos tipos de desafíos:
 Genera texto codificado en base64 que debe ser decodificado.
 
 **Ejemplo:**
-- **Desafío**: `Decode this base64 text: U29sb1BhcmFBZ2VudGVz`
-- **Respuesta correcta**: `SoloParaAgentes`
+- **Texto original:** `SoloParaAgentes`
+- **Desafío (codificado):** `U29sb1BhcmFBZ2VudGVz`
+- **Respuesta esperada:** `SoloParaAgentes`
 
 ### 2. Secuencias Numéricas Geométricas
 Presenta secuencias numéricas basadas en patrones geométricos.
 
 **Ejemplo:**
-- **Desafío**: `What is the next number in this sequence: 3, 9, 27, ?`
-- **Respuesta correcta**: `81` (secuencia geométrica con razón 3)
+- **Desafío:** `3, 9, 27, ?`
+- **Patrón:** Cada número es el anterior multiplicado por 3
+- **Respuesta correcta**: `81`
 
 ## 📦 Instalación
 
@@ -46,41 +48,38 @@ from captcha import generate_captcha, validate_captcha
 # Generar un desafío CAPTCHA
 challenge = generate_captcha()
 
-print(f"Tipo: {challenge['type']}")
+print(f"Tipo de desafío: {challenge['type']}")
 print(f"Desafío: {challenge['challenge']}")
 
 # El agente automatizado resuelve el desafío
 # Para base64: decodificar el texto
 # Para secuencia: calcular el siguiente número
 
-# Validar la respuesta
-response = challenge['answer']  # Respuesta del agente
-is_valid = validate_captcha(challenge, response)
+# Simular respuesta del agente
+response = challenge['answer']  # En producción, el agente calcula esto
 
-print(f"¿Respuesta válida? {is_valid}")
+# Validar la respuesta
+is_valid = validate_captcha(challenge, response)
+print(f"¿Respuesta correcta? {is_valid}")
 ```
 
 ### Ejemplo Completo con Base64
 
 ```python
-from captcha import generate_captcha, validate_captcha
 import base64
+from captcha import generate_captcha, validate_captcha
 
 # Generar desafío
 challenge = generate_captcha()
 
 if challenge['type'] == 'base64':
-    # Extraer el texto codificado del desafío
+    # El agente decodifica el desafío
     encoded_text = challenge['challenge'].split(': ')[1]
-    
-    # Decodificar
-    decoded = base64.b64decode(encoded_text).decode()
+    decoded_text = base64.b64decode(encoded_text).decode()
     
     # Validar
-    if validate_captcha(challenge, decoded):
-        print("✓ CAPTCHA resuelto correctamente")
-    else:
-        print("✗ Respuesta incorrecta")
+    is_valid = validate_captcha(challenge, decoded_text)
+    print(f"Validación: {is_valid}")  # True
 ```
 
 ### Ejemplo Completo con Secuencia
@@ -88,30 +87,34 @@ if challenge['type'] == 'base64':
 ```python
 from captcha import generate_captcha, validate_captcha
 
+# Generar desafío
 challenge = generate_captcha()
 
 if challenge['type'] == 'sequence':
-    # Extraer los números de la secuencia
+    # El agente analiza la secuencia
     sequence_part = challenge['challenge'].split(': ')[1]
-    numbers = [int(x.strip()) for x in sequence_part.split(',') if x.strip() != '?']
+    sequence_str = sequence_part.replace(', ?', '')
+    numbers = [int(n.strip()) for n in sequence_str.split(',')]
     
-    # Detectar el patrón (razón geométrica)
-    ratio = numbers[1] // numbers[0]
-    next_number = numbers[-1] * ratio
+    # Calcular el patrón (razón geométrica)
+    ratio = numbers[1] / numbers[0]
+    next_number = int(numbers[-1] * ratio)
     
     # Validar
-    if validate_captcha(challenge, str(next_number)):
-        print("✓ CAPTCHA resuelto correctamente")
-    else:
-        print("✗ Respuesta incorrecta")
+    is_valid = validate_captcha(challenge, str(next_number))
+    print(f"Validación: {is_valid}")  # True
 ```
 
-## 🧪 Pruebas
+## 🧪 Testing
 
 El proyecto incluye pruebas unitarias completas:
 
 ```bash
+# Ejecutar todas las pruebas
 python -m unittest test_captcha -v
+
+# Ejecutar pruebas específicas
+python -m unittest test_captcha.TestCaptcha -v
 ```
 
 Las pruebas cubren:
@@ -120,6 +123,7 @@ Las pruebas cubren:
 - Manejo de espacios en blanco
 - Casos específicos documentados
 - Validación de formato de datos
+- Patrones geométricos en secuencias
 
 ## 📁 Estructura del Proyecto
 
@@ -139,23 +143,44 @@ Genera un desafío CAPTCHA aleatorio.
 **Retorna:**
 - `dict` con las siguientes claves:
   - `type` (str): Tipo de desafío ('base64' o 'sequence')
-  - `challenge` (str): El texto del desafío
+  - `challenge` (str): El desafío presentado
   - `answer` (str): La respuesta correcta
 
 ### `validate_captcha(challenge, response)`
 
-Valida la respuesta de un desafío.
+Valida la respuesta de un usuario contra un desafío generado.
 
 **Parámetros:**
-- `challenge` (dict): El diccionario retornado por `generate_captcha()`
-- `response` (str): La respuesta del usuario/agente
+- `challenge` (dict): El diccionario de desafío retornado por `generate_captcha()`
+- `response` (str): La respuesta del usuario
 
 **Retorna:**
 - `bool`: `True` si la respuesta es correcta, `False` en caso contrario
 
-## 🔮 Extensiones Futuras
+## 🔮 Casos de Uso
 
-Este diseño puede extenderse para incorporar:
+Este sistema puede ser utilizado en:
+
+1. **APIs para automatización**: Verificar que las solicitudes provienen de scripts autorizados
+2. **Sistemas de integración**: Validar conexiones entre servicios automatizados
+3. **Educación**: Enseñar conceptos de codificación y patrones matemáticos
+4. **Juegos para desarrolladores**: Desafíos que requieren programación para resolver
+
+## 🔧 Extensibilidad
+
+El diseño modular permite agregar fácilmente nuevos tipos de desafíos:
+
+```python
+def _generate_custom_challenge():
+    """Implementar nuevo tipo de desafío"""
+    return {
+        'type': 'custom',
+        'challenge': 'tu_desafío_aquí',
+        'answer': 'respuesta_correcta'
+    }
+```
+
+Posibles extensiones futuras:
 - Operaciones matemáticas complejas (factoriales, fibonacci, etc.)
 - Conversión entre sistemas numéricos (binario, hexadecimal)
 - Expresiones regulares complejas
@@ -165,17 +190,23 @@ Este diseño puede extenderse para incorporar:
 
 ## 📝 Licencia
 
-Este proyecto está disponible como código abierto para fines educativos y de demostración.
+Este proyecto está disponible como código abierto bajo los términos de la licencia MIT.
 
 ## 👥 Contribuciones
 
 Las contribuciones son bienvenidas. Por favor:
-1. Haz fork del proyecto
-2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
+
+1. Fork el proyecto
+2. Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
+4. Push a la rama (`git push origin feature/nueva-caracteristica`)
 5. Abre un Pull Request
 
-## ⚠️ Nota
+## ⚠️ Notas de Seguridad
 
-Este proyecto es un concepto educativo y de demostración. No se recomienda usar en producción sin las debidas consideraciones de seguridad y casos de uso apropiados.
+Este sistema está diseñado como una prueba de concepto y demostración educativa. Para uso en producción, considere:
+
+- Implementar límites de tasa (rate limiting)
+- Registrar y monitorear intentos de validación
+- Rotar desafíos regularmente
+- Implementar timeouts para respuestas
